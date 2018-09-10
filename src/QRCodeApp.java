@@ -36,12 +36,14 @@ import javax.swing.JTextField;
 /**
  * This program can take a text message and generate a QR code or it can take a QR code image and decode the
  * text message. The program can take one or no parameter during start up. With no parameter, it will start
- * up the user interface and allow the user to either do a "Image->Open" of an image file or type a message
+ * up the user interface and allow the user to either do a "File->Open Image" of an image file or type a message
  * to generate the QR code image. With one parameter, it will either specify:
- *      image=<ImageFile>
+ *      java -jar qrcodeapp.jar image=<ImageFile>
  * or
- *      msg="<MessageText>"
- * When the program starts up, it will display the message and the corresponding QR code image.
+ *      java -jar qrcodeapp.jar msg="<MessageText>"
+ *
+ * When the program starts up, it will display the message and the corresponding QR code image. It also allows the
+ * user to save the QR code image to a file by doing "File->Save Image".
  */
 public class QRCodeApp extends JApplet implements ActionListener
 {
@@ -138,6 +140,7 @@ public class QRCodeApp extends JApplet implements ActionListener
                 JApplet app = new QRCodeApp(frame, imageFile, msg);
                 frame.add(app);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLayout(null);
                 frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
                 frame.setResizable(false);
                 frame.setLocationRelativeTo(null);
