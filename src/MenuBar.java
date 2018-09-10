@@ -59,6 +59,8 @@ public class MenuBar extends JMenuBar implements ActionListener
         String[] formats = ImageIO.getWriterFormatNames();
         String desc = String.format("Image file %s", Arrays.toString(formats));
         fileChooser.setFileFilter(new FileNameExtensionFilter(desc, formats));
+        //TODO: figure out why the line below caused an exception.
+        //      also figure out why when the image is displayed, part of the File Menu is clobbered by the image border.
 //        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
         menuFile.setMnemonic(KeyEvent.VK_F);
