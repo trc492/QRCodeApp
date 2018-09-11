@@ -40,7 +40,7 @@ public class ImagePanel extends JPanel
 {
     private static final long serialVersionUID = 4L;
 
-    private VideoCapture camera;
+    private VideoCapture camera = null;
     private Mat mat;
     private RefreshThread cameraThread;
     private BufferedImage image;
@@ -56,24 +56,9 @@ public class ImagePanel extends JPanel
         //
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         //
-        // Open the default camera.
-        //
-        camera = new VideoCapture(0);
-        if (!camera.isOpened())
-        {
-            JOptionPane.showMessageDialog(
-                this, "Failed to open the camera, perhap not having the permission or is in use by another app.",
-                QRCodeApp.PROGRAM_TITLE,
-                JOptionPane.ERROR_MESSAGE);
-        }
-        //
         // Preallocate some global variables.
         //
         mat = new Mat();
-        //
-        // Determine the camera image size and make the window size to match.
-        //
-        camera.read(mat);
         //
         // Create the Refresh thread to refresh the video pane at 10fps (i.e. every 100 msec).
         //
@@ -107,7 +92,22 @@ public class ImagePanel extends JPanel
      */
     public void startCamera()
     {
-        cameraThread.resumeThread();
+        //
+        // Open the default camera.
+        //
+        camera = new VideoCapture(0);
+        if (!camera.isOpened())
+        {
+            camera = null;
+            JOptionPane.showMessageDialog(
+                this, "Failed to open the camera, perhap not having the permission or is in use by another app.",
+                QRCodeApp.PROGRAM_TITLE,
+                JOptionPane.ERROR_MESSAGE);
+        }
+        else
+        {
+            cameraThread.resumeThread();
+        }
     }   //startCamera
 
     /**
@@ -116,6 +116,11 @@ public class ImagePanel extends JPanel
     public void stopCamera()
     {
         cameraThread.suspendThread();
+        if (camera != null)
+        {
+            camera.release();
+            camera = null;
+        }
     }   //stopCamera
 
     /**
@@ -123,9 +128,12 @@ public class ImagePanel extends JPanel
      */
     public void captureImage()
     {
-        camera.read(mat);
-        image = MatToBufferedImage(mat);
-        repaint();
+        if (camera != null)
+        {
+            camera.read(mat);
+            image = MatToBufferedImage(mat);
+            repaint();
+        }
     }   //captureImage
 
     /**
@@ -134,7 +142,10 @@ public class ImagePanel extends JPanel
     public void terminateCameraThread()
     {
         cameraThread.terminateThread();
-        camera.release();
+        if (camera != null)
+        {
+            camera.release();
+        }
     }   //terminateCameraThread
 
     /**
