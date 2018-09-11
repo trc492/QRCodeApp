@@ -42,6 +42,10 @@ public class MenuBar extends JMenuBar implements ActionListener
     private JMenuItem menuItemFileSave = new JMenuItem("Save Image");
     private JMenuItem menuItemFileExit = new JMenuItem("Exit");
 
+    private JMenu menuCamera = new JMenu("Camera");
+    private JMenuItem menuItemCameraStart = new JMenuItem("Start Camera");
+    private JMenuItem menuItemCameraCapture = new JMenuItem("Capture Image");
+
     private JMenu menuHelp = new JMenu("Help");
     private JMenuItem menuItemHelpAbout = new JMenuItem("About");
 
@@ -70,6 +74,12 @@ public class MenuBar extends JMenuBar implements ActionListener
         menuItemFileExit.setMnemonic(KeyEvent.VK_X);
         menuItemFileExit.addActionListener(this);
 
+        menuCamera.setMnemonic(KeyEvent.VK_M);
+        menuItemCameraStart.setMnemonic(KeyEvent.VK_R);
+        menuItemCameraStart.addActionListener(this);
+        menuItemCameraCapture.setMnemonic(KeyEvent.VK_C);
+        menuItemCameraCapture.addActionListener(this);
+
         menuHelp.setMnemonic(KeyEvent.VK_H);
         menuItemHelpAbout.setMnemonic(KeyEvent.VK_A);
         menuItemHelpAbout.addActionListener(this);
@@ -79,10 +89,17 @@ public class MenuBar extends JMenuBar implements ActionListener
         menuFile.addSeparator();
         menuFile.add(menuItemFileExit);
 
+        menuCamera.add(menuItemCameraStart);
+        menuCamera.add(menuItemCameraCapture);
+
         menuHelp.add(menuItemHelpAbout);
 
         add(menuFile);
+        add(menuCamera);
         add(menuHelp);
+
+        menuItemCameraStart.setEnabled(true);
+        menuItemCameraCapture.setEnabled(false);
     }   //MenuBar
 
     //
@@ -136,7 +153,20 @@ public class MenuBar extends JMenuBar implements ActionListener
             //
             // File->Exit is clicked.
             //
-            System.exit(0);
+            app.terminateProgram();
+        }
+        else if (source == menuItemCameraStart)
+        {
+            menuItemCameraStart.setEnabled(false);
+            menuItemCameraCapture.setEnabled(true);
+            app.startCamera();
+        }
+        else if (source == menuItemCameraCapture)
+        {
+            menuItemCameraCapture.setEnabled(false);
+            menuItemCameraStart.setEnabled(true);
+            app.captureImage();
+            app.stopCamera();
         }
         else if (source == menuItemHelpAbout)
         {

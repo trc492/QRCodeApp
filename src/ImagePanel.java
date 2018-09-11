@@ -22,17 +22,64 @@
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.highgui.VideoCapture;
+
 /**
- * This class implements an image panel which is a JPanel for rendering the QR code image.
+ * This class implements an image panel which is a JPanel for rendering the QR code image or the image from the
+ * camera.
  */
 public class ImagePanel extends JPanel
 {
     private static final long serialVersionUID = 4L;
 
+    private VideoCapture camera;
+    private Mat mat;
+    private RefreshThread cameraThread;
     private BufferedImage image;
+
+    /**
+     * Constructor: Create an instance of the object. It initializes the camera using OpenCV library and created
+     * the camera thread.
+     */
+    public ImagePanel()
+    {
+        //
+        // Load OpenCV library.
+        //
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        //
+        // Open the default camera.
+        //
+        camera = new VideoCapture(0);
+        if (!camera.isOpened())
+        {
+            JOptionPane.showMessageDialog(
+                this, "Failed to open the camera, perhap not having the permission or is in use by another app.",
+                QRCodeApp.PROGRAM_TITLE,
+                JOptionPane.ERROR_MESSAGE);
+        }
+        //
+        // Preallocate some global variables.
+        //
+        mat = new Mat();
+        //
+        // Determine the camera image size and make the window size to match.
+        //
+        camera.read(mat);
+        //
+        // Create the Refresh thread to refresh the video pane at 10fps (i.e. every 100 msec).
+        //
+        cameraThread = new RefreshThread(this, 100);
+        cameraThread.start();
+    }   //ImagePanel
 
     /**
      * This method is called to update the QR code image.
@@ -54,6 +101,59 @@ public class ImagePanel extends JPanel
     {
         return image;
     }   //getImage
+
+    /**
+     * This method resumes the camera thread.
+     */
+    public void startCamera()
+    {
+        cameraThread.resumeThread();
+    }   //startCamera
+
+    /**
+     * This method suspends the camera thread.
+     */
+    public void stopCamera()
+    {
+        cameraThread.suspendThread();
+    }   //stopCamera
+
+    /**
+     * This method captures an image from the camera.
+     */
+    public void captureImage()
+    {
+        camera.read(mat);
+        image = MatToBufferedImage(mat);
+        repaint();
+    }   //captureImage
+
+    /**
+     * This method terminates the camera thread and release the camera.
+     */
+    public void terminateCameraThread()
+    {
+        cameraThread.terminateThread();
+        camera.release();
+    }   //terminateCameraThread
+
+    /**
+     * This method converts an OpenCV image (i.e. Mat) into a BufferedImage that can be drawn on
+     * a Java graphics object.
+     *
+     * @param mat specifies an OpenCV image.
+     * @return converted BufferedImage object.
+     */
+    private BufferedImage MatToBufferedImage(Mat mat)
+    {
+        BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
+        WritableRaster raster = image.getRaster();
+        DataBufferByte dataBuffer = (DataBufferByte)raster.getDataBuffer();
+        byte[] data = dataBuffer.getData();
+        mat.get(0, 0, data);
+
+        return image;
+    }   //MatToBufferedImage
 
     /**
      * This method is called when the image needed a repaint.

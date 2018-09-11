@@ -4,5 +4,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/Michael/GitHub/Trc492/QRCodeApp/lib/core-3.3.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Michael/GitHub/Trc492/QRCodeApp/lib/javase-3.3.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/GitHub/Trc492/QRCodeApp/OpenCV-2_4_1_3/opencv-2413.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="QRCodeApp/OpenCV-2_4_1_3/x64"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

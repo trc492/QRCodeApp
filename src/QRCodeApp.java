@@ -22,6 +22,8 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +47,7 @@ import javax.swing.JTextField;
  * When the program starts up, it will display the message and the corresponding QR code image. It also allows the
  * user to save the QR code image to a file by doing "File->Save Image".
  */
-public class QRCodeApp extends JApplet implements ActionListener
+public class QRCodeApp extends JApplet implements ActionListener, WindowListener
 {
     private static final long serialVersionUID = 1L;
     public static final String PROGRAM_TITLE = "QR Code Application";
@@ -56,8 +58,8 @@ public class QRCodeApp extends JApplet implements ActionListener
     private static final int ERROR_INVALID_NUM_ARGUMENTS = -1;
     private static final int ERROR_INVALID_ARGUMENT = -2;
 
-    private static final int IMAGE_WIDTH = 512;
-    private static final int IMAGE_HEIGHT = 512;
+    private static final int IMAGE_WIDTH = 640;
+    private static final int IMAGE_HEIGHT = 480;
     private static final int BORDER_SIZE = 20;
     private static final int MENU_BAR_HEIGHT = 70;
     private static final int MSG_LABEL_WIDTH = 60;
@@ -177,6 +179,7 @@ public class QRCodeApp extends JApplet implements ActionListener
         frame.add(imagePanel);
         frame.add(msgLabel);
         frame.add(msgPanel);
+        frame.addWindowListener(this);
 
         imagePanel.setBounds(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
 
@@ -223,6 +226,11 @@ public class QRCodeApp extends JApplet implements ActionListener
         }
     }   //setImageFile
 
+    /**
+     * This method saves the image to the specified file.
+     *
+     * @param imageFile specifies the file path to save the image file to.
+     */
     public void saveImageFile(File imageFile)
     {
         try
@@ -252,6 +260,49 @@ public class QRCodeApp extends JApplet implements ActionListener
         imagePanel.setImage(QRCode.encodeMessage(msg, IMAGE_WIDTH, IMAGE_HEIGHT));
     }   //setMessageText
 
+    /**
+     * This method starts the camera by resuming the camera thread.
+     */
+    public void startCamera()
+    {
+        imagePanel.startCamera();
+    }   //startCamera
+
+    /**
+     * This method stops the camera by suspending the camera thread.
+     */
+    public void stopCamera()
+    {
+        imagePanel.stopCamera();
+    }   //stopCamera
+
+    /**
+     * This method captures an image from the camera, decodes the QR code in the image and update the text message.
+     */
+    public void captureImage()
+    {
+        imagePanel.captureImage();
+        BufferedImage image = imagePanel.getImage();
+        try
+        {
+            msgPanel.setText(QRCode.decodeMessage(image));
+        }
+        catch (RuntimeException e)
+        {
+            JOptionPane.showMessageDialog(
+                this, "QR code not found in image.", QRCodeApp.PROGRAM_TITLE, JOptionPane.ERROR_MESSAGE);
+        }
+    }   //captureImage
+
+    /**
+     * This method terminates the program by terminating the camera thread and exiting the program.
+     */
+    public void terminateProgram()
+    {
+        imagePanel.terminateCameraThread();
+        System.exit(0);
+    }   //terminateProgram
+
     //
     // Implements ActionListener interface.
     //
@@ -269,5 +320,49 @@ public class QRCodeApp extends JApplet implements ActionListener
         //
         imagePanel.setImage(QRCode.encodeMessage(msgPanel.getText(), IMAGE_WIDTH, IMAGE_HEIGHT));
     }   //actionPerformed
+
+    //
+    // Implements WindowListener interface.
+    //
+
+    @Override
+    public void windowActivated(WindowEvent e)
+    {
+    }   //windowActivated
+
+    @Override
+    public void windowClosed(WindowEvent e)
+    {
+    }   //windowClosed
+
+    /**
+     * This method is called when the "X" Window Close button is clicked. This will exit the program. It makes sure
+     * the program shuts down properly by terminating the camera thread releasing the camera.
+     */
+    @Override
+    public void windowClosing(WindowEvent e)
+    {
+        terminateProgram();
+    }   //windowClosing
+
+    @Override
+    public void windowDeactivated(WindowEvent e)
+    {
+    }   //windowDeactivated
+
+    @Override
+    public void windowDeiconified(WindowEvent e)
+    {
+    }   //windowDeiconified
+
+    @Override
+    public void windowIconified(WindowEvent e)
+    {
+    }   //windowIconified
+
+    @Override
+    public void windowOpened(WindowEvent e)
+    {
+    }   //windowOpened
 
 }   //class QRCodeApp
