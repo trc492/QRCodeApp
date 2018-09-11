@@ -165,8 +165,8 @@ public class MenuBar extends JMenuBar implements ActionListener
         {
             menuItemCameraCapture.setEnabled(false);
             menuItemCameraStart.setEnabled(true);
-            app.captureImage();
             app.stopCamera();
+            app.captureImage();
         }
         else if (source == menuItemHelpAbout)
         {
