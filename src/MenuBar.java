@@ -98,6 +98,7 @@ public class MenuBar extends JMenuBar implements ActionListener
         add(menuCamera);
         add(menuHelp);
 
+        menuItemFileSave.setEnabled(false);
         menuItemCameraStart.setEnabled(true);
         menuItemCameraCapture.setEnabled(false);
     }   //MenuBar
@@ -118,6 +119,15 @@ public class MenuBar extends JMenuBar implements ActionListener
 
         if (source == menuItemFileOpen)
         {
+            if (menuItemCameraCapture.isEnabled())
+            {
+                //
+                // Camera was started, we must stop it first.
+                //
+                menuItemCameraCapture.setEnabled(false);
+                menuItemCameraStart.setEnabled(true);
+                app.stopCamera();
+            }
             //
             // File->Open is clicked.
             //
@@ -129,7 +139,10 @@ public class MenuBar extends JMenuBar implements ActionListener
                 //
                 // The user clicked "open" approving the file choice.
                 //
-                app.setImageFile(fileChooser.getSelectedFile());
+                if (app.setImageFile(fileChooser.getSelectedFile()))
+                {
+                    menuItemFileSave.setEnabled(true);
+                }
             }
         }
         else if (source == menuItemFileSave)
@@ -159,6 +172,7 @@ public class MenuBar extends JMenuBar implements ActionListener
         {
             menuItemCameraStart.setEnabled(false);
             menuItemCameraCapture.setEnabled(true);
+            menuItemFileSave.setEnabled(false);
             app.startCamera();
         }
         else if (source == menuItemCameraCapture)
@@ -166,7 +180,7 @@ public class MenuBar extends JMenuBar implements ActionListener
             menuItemCameraCapture.setEnabled(false);
             menuItemCameraStart.setEnabled(true);
             app.stopCamera();
-            app.captureImage();
+            menuItemFileSave.setEnabled(app.captureImage());
         }
         else if (source == menuItemHelpAbout)
         {

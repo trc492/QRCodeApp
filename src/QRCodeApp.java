@@ -207,14 +207,18 @@ public class QRCodeApp extends JApplet implements ActionListener, WindowListener
      * This method displays the image file and decodes the message.
      *
      * @param imageFile specifies the image file.
+     * @return true if the operation is successful, false otherwise.
      */
-    public void setImageFile(File imageFile)
+    public boolean setImageFile(File imageFile)
     {
+        boolean success = false;
+
         try
         {
             BufferedImage image = ImageIO.read(imageFile);
             imagePanel.setImage(image);
             msgPanel.setText(QRCode.decodeMessage(image));
+            success = true;
         }
         catch (IOException e)
         {
@@ -224,6 +228,13 @@ public class QRCodeApp extends JApplet implements ActionListener, WindowListener
                 QRCodeApp.PROGRAM_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }
+        catch (RuntimeException e)
+        {
+            JOptionPane.showMessageDialog(
+                this, "QR code not found in image.", QRCodeApp.PROGRAM_TITLE, JOptionPane.ERROR_MESSAGE);
+        }
+
+        return success;
     }   //setImageFile
 
     /**
@@ -278,20 +289,27 @@ public class QRCodeApp extends JApplet implements ActionListener, WindowListener
 
     /**
      * This method captures an image from the camera, decodes the QR code in the image and update the text message.
+     *
+     * @return true if operation is successful, false otherwise.
      */
-    public void captureImage()
+    public boolean captureImage()
     {
+        boolean success = false;
+
         imagePanel.captureImage();
         BufferedImage image = imagePanel.getImage();
         try
         {
             msgPanel.setText(QRCode.decodeMessage(image));
+            success = true;
         }
         catch (RuntimeException e)
         {
             JOptionPane.showMessageDialog(
                 this, "QR code not found in image.", QRCodeApp.PROGRAM_TITLE, JOptionPane.ERROR_MESSAGE);
         }
+
+        return success;
     }   //captureImage
 
     /**
