@@ -119,6 +119,9 @@ public class MenuBar extends JMenuBar implements ActionListener
 
         if (source == menuItemFileOpen)
         {
+            //
+            // File->Open is clicked.
+            //
             if (menuItemCameraCapture.isEnabled())
             {
                 //
@@ -128,9 +131,7 @@ public class MenuBar extends JMenuBar implements ActionListener
                 menuItemCameraStart.setEnabled(true);
                 app.stopCamera();
             }
-            //
-            // File->Open is clicked.
-            //
+
             fileChooser.setSelectedFile(new File(""));
             int returnVal = fileChooser.showOpenDialog(this);
 
@@ -138,6 +139,8 @@ public class MenuBar extends JMenuBar implements ActionListener
             {
                 //
                 // The user clicked "open" approving the file choice.
+                // If the operation failed, File->Save remained enabled in case the user wants to save the previous
+                // image if any.
                 //
                 if (app.setImageFile(fileChooser.getSelectedFile()))
                 {
