@@ -58,7 +58,7 @@ public class MenuBar extends JMenuBar implements ActionListener
     {
         this.app = app;
         //
-        // Create and initialize a global FileChooser object for File->Open.
+        // Create and initialize a global FileChooser object for File->Open and File->Save.
         //
         String[] formats = ImageIO.getWriterFormatNames();
         String desc = String.format("Image file %s", Arrays.toString(formats));
