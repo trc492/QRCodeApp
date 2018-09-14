@@ -71,7 +71,7 @@ public class ImagePanel extends JPanel
      *
      * @param image specifies the image.
      */
-    public void setImage(BufferedImage image)
+    public synchronized void setImage(BufferedImage image)
     {
         this.image = image;
         repaint();
@@ -82,7 +82,7 @@ public class ImagePanel extends JPanel
      *
      * @return displayed image.
      */
-    public BufferedImage getImage()
+    public synchronized BufferedImage getImage()
     {
         return image;
     }   //getImage
@@ -90,7 +90,7 @@ public class ImagePanel extends JPanel
     /**
      * This method resumes the camera thread.
      */
-    public void startCamera()
+    public synchronized void startCamera()
     {
         //
         // Open the default camera.
@@ -113,7 +113,7 @@ public class ImagePanel extends JPanel
     /**
      * This method suspends the camera thread.
      */
-    public void stopCamera()
+    public synchronized void stopCamera()
     {
         cameraThread.suspendThread();
         if (camera != null)
@@ -126,20 +126,23 @@ public class ImagePanel extends JPanel
     /**
      * This method captures an image from the camera.
      */
-    public void captureImage()
+    public synchronized void captureImage()
     {
         if (camera != null)
         {
             camera.read(mat);
-            image = MatToBufferedImage(mat);
-            repaint();
+            if (mat.height() > 0 && mat.width() > 0)
+            {
+                image = MatToBufferedImage(mat);
+                repaint();
+            }
         }
     }   //captureImage
 
     /**
      * This method terminates the camera thread and release the camera.
      */
-    public void terminateCameraThread()
+    public synchronized void terminateCameraThread()
     {
         cameraThread.terminateThread();
         if (camera != null)
@@ -172,7 +175,7 @@ public class ImagePanel extends JPanel
      * @param g specifies the Graphics object for the paint.
      */
     @Override
-    public void paint(Graphics g)
+    public synchronized void paint(Graphics g)
     {
         g.drawImage(image, 0, 0, null);
     }   //paint

@@ -46,7 +46,7 @@ public class RefreshThread extends Thread
     /**
      * This method suspends the thread.
      */
-    public void suspendThread()
+    public synchronized void suspendThread()
     {
         threadResumed = false;
     }   //suspendThread
@@ -54,7 +54,7 @@ public class RefreshThread extends Thread
     /**
      * This method resumes the thread.
      */
-    public void resumeThread()
+    public synchronized void resumeThread()
     {
         threadResumed = true;
     }   //resumeThread
@@ -62,7 +62,7 @@ public class RefreshThread extends Thread
     /**
      * This method terminates the thread.
      */
-    public void terminateThread()
+    public synchronized void terminateThread()
     {
         threadRunning = false;
     }   //terminateThread
@@ -78,9 +78,12 @@ public class RefreshThread extends Thread
             //
             // Repaint the video pane every refreshInterval.
             //
-            if (threadResumed)
+            synchronized(this)
             {
-                panel.captureImage();
+                if (threadResumed)
+                {
+                    panel.captureImage();
+                }
             }
             sleep(refreshInterval);
         }

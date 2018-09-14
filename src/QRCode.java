@@ -63,7 +63,7 @@ public class QRCode
         }
         catch (WriterException e)
         {
-            throw new RuntimeException(String.format("Failed to encode message: %s", e.getMessage()));
+            throw new RuntimeException("Failed to encode message: " + e.getMessage());
         }
 
         return image;
@@ -87,7 +87,7 @@ public class QRCode
         }
         catch (NotFoundException e)
         {
-            throw new RuntimeException(String.format("QR code not found in image: %s", e.getMessage()));
+            throw new RuntimeException("QR code not found in image: " + e.getMessage());
         }
 
         return msg;

@@ -224,7 +224,7 @@ public class QRCodeApp extends JApplet implements ActionListener, WindowListener
         {
             JOptionPane.showMessageDialog(
                 this,
-                String.format("Failed to read image file %s.", imageFile),
+                "Failed to read image file " + imageFile,
                 QRCodeApp.PROGRAM_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -254,7 +254,7 @@ public class QRCodeApp extends JApplet implements ActionListener, WindowListener
         {
             JOptionPane.showMessageDialog(
                 this,
-                String.format("Failed to write image file %s.", imageFile),
+                "Failed to write image file " + imageFile,
                 QRCodeApp.PROGRAM_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }

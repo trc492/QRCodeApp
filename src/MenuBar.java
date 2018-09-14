@@ -61,7 +61,7 @@ public class MenuBar extends JMenuBar implements ActionListener
         // Create and initialize a global FileChooser object for File->Open and File->Save.
         //
         String[] formats = ImageIO.getWriterFormatNames();
-        String desc = String.format("Image file %s", Arrays.toString(formats));
+        String desc = "Image file " + Arrays.toString(formats);
         fileChooser.setFileFilter(new FileNameExtensionFilter(desc, formats));
         //TODO: figure out why the line below caused an exception.
 //        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
